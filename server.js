@@ -22,7 +22,7 @@ async function startNDIStream(ws) {
     console.log("NDI-Stream wird empfangen...");
 
     const grandiose = require('grandiose');
-    let source = { name: "MBP-DIEHL.LOCAL (OBS)", urlAddress: "10.8.2.212" };
+    let source = { name: "UUN (NVIDIA GeForce RTX 4060 Ti 1)", urlAddress: "192.168.1.93" };
 
     let ndiReceiver = await grandiose.receive({ source: source });
 
@@ -44,5 +44,9 @@ wss.on("connection", (ws) => {
 
 server.listen(3000, () => {
     console.log("Server läuft auf http://localhost:3000");
+    grandiose.find().then(sources => {
+        console.log("Verfügbare NDI-Quellen:");
+        sources.forEach(source => console.log(source.name));
+    });
 });
 
