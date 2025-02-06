@@ -18,20 +18,25 @@ app.get("/", (req, res) => {
 });
 
 
-async function startNDIStream(ws) {
-    console.log("NDI-Stream wird empfangen...");
-
-    const grandiose = require('grandiose');
-    let source = { name: "UUN (NVIDIA GeForce RTX 4060 Ti 1)", urlAddress: "192.168.1.93" };
-
-    let ndiReceiver = await grandiose.receive({ source: source });
-
-    while (true) {
-        const frame = await ndiReceiver.video();
-        if (!frame || ws.readyState !== WebSocket.OPEN) break;
-        ws.send(frame.data);
+async function startNDIStream() {
+    const sources = await grandiose.find();
+    
+    if (sources.length === 0) {
+        console.error("Keine NDI-Quellen gefunden! Starte eine NDI-Quelle im Netzwerk.");
+        return;
     }
+
+    // Die erste verfügbare NDI-Quelle verwenden
+    const selectedSource = sources[0].name;
+
+    let source = { name: "UUN (NVIDIA GeForce RTX 4060 Ti 1)", urlAddress: "192.168.1.93" };
+    console.log("Verwende NDI-Quelle:", source);
+
+    const ndiReceiver = await grandiose.receive({ source: source });
+
+    console.log("NDI-Stream gestartet!");
 }
+
 
 wss.on("connection", (ws) => {
     console.log("Neuer WebSocket-Client verbunden");
