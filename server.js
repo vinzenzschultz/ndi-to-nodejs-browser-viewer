@@ -7,15 +7,24 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+const path = require("path");
+
+// Statische Dateien aus dem aktuellen Verzeichnis bereitstellen
+app.use(express.static(path.join(__dirname, "public")));
+
+// Standard-Route für `/`
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+
 async function startNDIStream(ws) {
     console.log("NDI-Stream wird empfangen...");
 
-    const ndiReceiver = await grandiose.receive({
-        source: "NDI_SOURCE_NAME", // Ersetze mit deinem NDI-Stream-Namen
-        allowVideo: true,
-        allowAudio: false,
-        colorFormat: grandiose.ColorFormat.UYVY
-    });
+    const grandiose = require('grandiose');
+    let source = { name: "MBP-DIEHL.LOCAL (OBS)", urlAddress: "10.8.2.212" };
+
+    let ndiReceiver = await grandiose.receive({ source: source });
 
     while (true) {
         const frame = await ndiReceiver.video();
@@ -36,3 +45,4 @@ wss.on("connection", (ws) => {
 server.listen(3000, () => {
     console.log("Server läuft auf http://localhost:3000");
 });
+
