@@ -1,0 +1,30 @@
+{
+  "name": "ndi-to-nodejs-browser-viewer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vinzenzschultz/ndi-to-nodejs-browser-viewer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vinzenzschultz/ndi-to-nodejs-browser-viewer/issues"
+  },
+  "homepage": "https://github.com/vinzenzschultz/ndi-to-nodejs-browser-viewer#readme",
+  "dependencies": {
+    "canvas": "^3.1.0",
+    "child_process": "^1.0.2",
+    "express": "^4.21.2",
+    "grandiose": "file:grandiose",
+    "nvm": "^0.0.4",
+    "socket.io": "^4.8.1",
+    "ws": "^8.18.0"
+  }
+}

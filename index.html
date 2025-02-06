@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NDI Stream</title>
+</head>
+<body>
+    <canvas id="videoCanvas"></canvas>
+
+    <script>
+        const ws = new WebSocket("ws://localhost:3000");
+        const canvas = document.getElementById("videoCanvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = 1280; // Setze die Auflösung deines Streams
+        canvas.height = 720;
+
+        ws.binaryType = "arraybuffer";
+
+        ws.onmessage = (event) => {
+            const imageData = new Uint8Array(event.data);
+            const img = new ImageData(new Uint8ClampedArray(imageData), canvas.width, canvas.height);
+            ctx.putImageData(img, 0, 0);
+        };
+    </script>
+</body>
+</html>
