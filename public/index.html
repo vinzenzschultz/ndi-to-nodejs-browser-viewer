@@ -18,8 +18,8 @@
         const ctx = canvas.getContext("2d");
 
         // Standardauflösung setzen
-        canvas.width = 1280;
-        canvas.height = 720;
+        canvas.width = 1920;
+        canvas.height = 1080;
 
         ws.binaryType = "arraybuffer";
 
@@ -27,7 +27,7 @@
             const frameData = new Uint8Array(event.data);
 
             // Dummy ImageData für Testzwecke (da UYVY nicht direkt funktioniert)
-            const imageData = new ImageData(1280, 720);
+            const imageData = new ImageData(1920, 1080);
             for (let i = 0; i < imageData.data.length; i += 4) {
                 imageData.data[i] = frameData[i] || 0;      // Rot
                 imageData.data[i + 1] = frameData[i + 1] || 0; // Grün

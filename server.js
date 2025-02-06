@@ -30,10 +30,10 @@ async function startNDIStream(ws) {
     // Die erste verfügbare NDI-Quelle verwenden
     const selectedSource = sources[0].name;
 
-    let source = { name: "UUN (NVIDIA GeForce RTX 4060 Ti 1)", urlAddress: "192.168.1.93" };
+    let source = { name: "ZGR-ENC05 (Stream1)", urlAddress: "192.168.1.93" };
     console.log("Verwende NDI-Quelle:", source);
 
-    const ndiReceiver = await grandiose.receive({ source: source });
+    const ndiReceiver = await grandiose.receive({ source: sources[0], allowVideo: true, colorFormat: grandiose.COLOR_FORMAT_BGRX_BGRA });
 
     console.log("NDI-Stream gestartet!");
     
