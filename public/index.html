@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NDI Stream</title>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #000; }
+        canvas { border: 2px solid #fff; width: 80%; }
+    </style>
 </head>
 <body>
     <canvas id="videoCanvas"></canvas>
@@ -13,16 +17,29 @@
         const canvas = document.getElementById("videoCanvas");
         const ctx = canvas.getContext("2d");
 
-        canvas.width = 1280; // Setze die Auflösung deines Streams
+        // Standardauflösung setzen
+        canvas.width = 1280;
         canvas.height = 720;
 
         ws.binaryType = "arraybuffer";
 
         ws.onmessage = (event) => {
-            const imageData = new Uint8Array(event.data);
-            const img = new ImageData(new Uint8ClampedArray(imageData), canvas.width, canvas.height);
-            ctx.putImageData(img, 0, 0);
+            const frameData = new Uint8Array(event.data);
+
+            // Dummy ImageData für Testzwecke (da UYVY nicht direkt funktioniert)
+            const imageData = new ImageData(1280, 720);
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                imageData.data[i] = frameData[i] || 0;      // Rot
+                imageData.data[i + 1] = frameData[i + 1] || 0; // Grün
+                imageData.data[i + 2] = frameData[i + 2] || 0; // Blau
+                imageData.data[i + 3] = 255;               // Alpha (volle Deckkraft)
+            }
+
+            ctx.putImageData(imageData, 0, 0);
         };
+
+        ws.onopen = () => console.log("Verbunden mit dem Server.");
+        ws.onclose = () => console.log("Verbindung zum Server verloren.");
     </script>
 </body>
 </html>

@@ -10,7 +10,8 @@ const wss = new WebSocket.Server({ server });
 const path = require("path");
 
 // Statische Dateien aus dem aktuellen Verzeichnis bereitstellen
-app.use(express.static(path.join(__dirname, "public")));
+//app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("public"));
 
 // Standard-Route für `/`
 app.get("/", (req, res) => {
@@ -18,7 +19,7 @@ app.get("/", (req, res) => {
 });
 
 
-async function startNDIStream() {
+async function startNDIStream(ws) {
     const sources = await grandiose.find();
     
     if (sources.length === 0) {
@@ -35,15 +36,31 @@ async function startNDIStream() {
     const ndiReceiver = await grandiose.receive({ source: source });
 
     console.log("NDI-Stream gestartet!");
+    
+    while (ws.readyState === WebSocket.OPEN) {
+        try {
+            const frame = await ndiReceiver.video();
+            if (!frame) continue;
+    
+            console.log(`Sende Frame mit Größe: ${frame.data.length}`);
+            ws.send(frame.data);
+        } catch (error) {
+            console.error("Fehler beim Empfangen des NDI-Streams:", error);
+            break;
+        }
+    }
 }
 
 
 wss.on("connection", (ws) => {
-    console.log("Neuer WebSocket-Client verbunden");
-    startNDIStream(ws);
+    console.log("Neuer WebSocket-Client verbunden.");
+    
+    startNDIStream(ws).catch((error) => {
+        console.error("Fehler beim Starten des NDI-Streams:", error);
+    });
 
     ws.on("close", () => {
-        console.log("WebSocket-Client getrennt");
+        console.log("WebSocket-Client getrennt.");
     });
 });
 
